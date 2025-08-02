@@ -1,13 +1,17 @@
 pipeline {
   agent any
+
   environment {
-    IMAGE = 'yourdockerhubusername/nginx-site:${BUILD_NUMBER}'
+    IMAGE = 'dankmogus1/nginx-site:${BUILD_NUMBER}'
+    PROJECT_ID = 'generated-motif-467509-b6'
+    CLUSTER_NAME = 'cnas-cluster-1'
+    CLUSTER_ZONE = 'us-central1' // e.g. asia-southeast1-b
   }
 
   stages {
     stage('Clone') {
       steps {
-        git 'https://github.com/YOUR_USERNAME/nginx-site.git'
+        git 'https://github.com/darrylcsf1/nginx-cnasasg.git'
       }
     }
 
@@ -19,9 +23,22 @@ pipeline {
 
     stage('Push') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-cnas-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
           sh 'echo $PASS | docker login -u $USER --password-stdin'
           sh 'docker push $IMAGE'
+        }
+      }
+    }
+
+    stage('Deploy to GKE') {
+      steps {
+        withCredentials([file(credentialsId: 'cnas-gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+          sh '''
+            gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+            gcloud config set project $PROJECT_ID
+            gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
+            kubectl apply -f k8s/deployment.yaml
+          '''
         }
       }
     }
