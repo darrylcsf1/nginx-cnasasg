@@ -47,10 +47,10 @@ pipeline {
 
   post {
     success {
-      echo "✅ Deployment to GKE successful!"
+      echo "Deployment to GKE successful!"
     }
     failure {
-      echo "❌ Deployment failed. Check Jenkins logs."
+      echo "Deployment failed. Check Jenkins logs."
     }
   }
 }
