@@ -6,6 +6,7 @@ pipeline {
     PROJECT_ID = "generated-motif-467509-b6"
     CLUSTER_NAME = "cnas-cluster-1"
     CLUSTER_ZONE = "us-central1" // e.g. asia-southeast1-b
+    USE_GKE_GCLOUD_AUTH_PLUGIN = "True"
   }
 
   stages {
