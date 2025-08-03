@@ -2,10 +2,10 @@ pipeline {
   agent any
 
   environment {
-    IMAGE = 'dankmogus1/nginx-site:${BUILD_NUMBER}'
-    PROJECT_ID = 'generated-motif-467509-b6'
-    CLUSTER_NAME = 'cnas-cluster-1'
-    CLUSTER_ZONE = 'us-central1' // e.g. asia-southeast1-b
+    IMAGE = "dankmogus1/nginx-site:${BUILD_NUMBER}"
+    PROJECT_ID = "generated-motif-467509-b6"
+    CLUSTER_NAME = "cnas-cluster-1"
+    CLUSTER_ZONE = "us-central1" // e.g. asia-southeast1-b
   }
 
   stages {
@@ -17,7 +17,7 @@ pipeline {
 
     stage('Build') {
       steps {
-        sh 'docker build -t $IMAGE .'
+        sh "docker build -t $IMAGE ."
       }
     }
 
@@ -25,7 +25,7 @@ pipeline {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-cnas-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
           sh 'echo $PASS | docker login -u $USER --password-stdin'
-          sh 'docker push $IMAGE'
+          sh "docker push $IMAGE"
         }
       }
     }
@@ -33,15 +33,24 @@ pipeline {
     stage('Deploy to GKE') {
       steps {
         withCredentials([file(credentialsId: 'cnas-gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-          sh '''
+          sh """
             gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
             gcloud config set project $PROJECT_ID
             gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
             kubectl apply -f k8s/deployment.yaml
             kubectl apply -f k8s/service.yaml
-          '''
+          """
         }
       }
+    }
+  }
+
+  post {
+    success {
+      echo "✅ Deployment to GKE successful!"
+    }
+    failure {
+      echo "❌ Deployment failed. Check Jenkins logs."
     }
   }
 }
