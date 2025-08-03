@@ -11,7 +11,7 @@ pipeline {
   stages {
     stage('Clone') {
       steps {
-        git 'https://github.com/darrylcsf1/nginx-cnasasg.git'
+        git branch: 'main', url: 'https://github.com/darrylcsf1/nginx-cnasasg'
       }
     }
 
