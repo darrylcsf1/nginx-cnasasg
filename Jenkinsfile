@@ -38,6 +38,7 @@ pipeline {
             gcloud config set project $PROJECT_ID
             gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
             kubectl apply -f k8s/deployment.yaml
+            kubectl apply -f k8s/service.yaml
           '''
         }
       }
