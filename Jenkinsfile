@@ -25,16 +25,6 @@ pipeline {
     stage('Scan with Trivy') {
       steps {
         sh '''
-          if ! command -v trivy &> /dev/null; then
-            echo "Installing Trivy..."
-            sudo apt update
-            sudo apt install -y curl gnupg lsb-release
-            curl -fsSL https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/trivy.gpg
-            echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/trivy.list
-            sudo apt update
-            sudo apt install -y trivy
-          fi
-
           echo "Running Trivy vulnerability scan..."
           trivy image --exit-code 1 --severity CRITICAL,HIGH $IMAGE
         '''
