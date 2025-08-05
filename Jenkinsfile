@@ -50,7 +50,7 @@ pipeline {
 
             echo "Deploying to GKE..."
             kubectl replace -f k8s/deployment.yaml --force --validate=false
-            kubectl apply -f k8s/service.yaml
+            kubectl replace -f k8s/service.yaml --force --validate=false
           """
         }
       }
