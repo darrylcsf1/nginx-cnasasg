@@ -48,7 +48,7 @@ pipeline {
             gcloud config set project $PROJECT_ID
             gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
             kubectl apply --force-conflicts --server-side -f k8s/deployment.yaml --validate=false
-            kubectl apply -f k8s/service.yaml --validate=false
+            kubectl replace -f k8s/deployment.yaml --force
           """
         }
       }
