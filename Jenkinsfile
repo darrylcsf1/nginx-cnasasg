@@ -22,7 +22,7 @@ pipeline {
           sh '''
             echo "Scanning repository for secrets..."
             export PATH=$PATH:/home/tan_tzi_how_darryl/.local/bin
-            ggshield -m secret scan repo . --exit-zero
+            python3 -m ggshield secret scan repo . --exit-zero
           '''
         }
       }
