@@ -61,8 +61,8 @@ pipeline {
             gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
 
             echo "Deploying to GKE..."
-            kubectl apply -f k8s/deployment.yaml
-            kubectl apply -f k8s/service.yaml
+            kubectl replace -f k8s/deployment.yaml --force --validate=false
+            kubectl replace -f k8s/service.yaml --force --validate=false
           """
         }
       }
