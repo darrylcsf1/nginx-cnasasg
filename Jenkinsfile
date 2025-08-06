@@ -21,6 +21,7 @@ pipeline {
         withCredentials([string(credentialsId: 'gitguardian-token', variable: '39b2f8df-026e-40aa-bc2f-bc87b581ac4c')]) {
           sh '''
             echo "Scanning repository for secrets..."
+            export PATH=$PATH:/home/tan_tzi_how_darryl/.local/bin
             ggshield secret scan repo . --exit-zero
           '''
         }
